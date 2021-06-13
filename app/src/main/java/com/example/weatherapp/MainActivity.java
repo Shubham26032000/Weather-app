@@ -1,8 +1,16 @@
 package com.example.weatherapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
@@ -31,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     final String url = "http://api.openweathermap.org/data/2.5/weather";
     final String apiKey = "6167254a872b3097a04b6ee4e49a833c";
+
+    String location_provider = LocationManager.GPS_PROVIDER;
+    LocationManager locationManager;
+    LocationListener locationListener;
+    final int MIN_TIME = 5000;
+    final int MIN_DISTANCE = 1000;
+    final int REQUEST_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,56 +89,53 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        }
+    }
 
-        private void getWeatherData(String location)
-        {
+    private void getWeatherData(String location) {
 
-            String tempUrl = url + "?q=" + location + "&appid=" + apiKey;
-            StringRequest request = new StringRequest(Request.Method.POST, tempUrl, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        setFetchedData(response);
-                    }catch (Exception e) {
-                        Toast.makeText(MainActivity.this, "Error occur!", Toast.LENGTH_SHORT).show();
-                    }
+        String tempUrl = url + "?q=" + location + "&appid=" + apiKey;
+        StringRequest request = new StringRequest(Request.Method.POST, tempUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    setFetchedData(response);
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "Error occur!", Toast.LENGTH_SHORT).show();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-                    binding.progressBar.setVisibility(View.GONE);
-                    binding.mainContainer.setVisibility(View.GONE);
-                    binding.tvErrorMessage.setVisibility(View.VISIBLE);
-                    binding.searchViewErrorLayout.setVisibility(View.VISIBLE);
-                }
-            });
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(request);
+                binding.progressBar.setVisibility(View.GONE);
+                binding.mainContainer.setVisibility(View.GONE);
+                binding.tvErrorMessage.setVisibility(View.VISIBLE);
+                binding.searchViewErrorLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(request);
 
-        }
+    }
 
-        private static String getTimeString(String timeStamp)
-        {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(Integer.parseInt(timeStamp) * 1000L);
-            Date date = calendar.getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
-            return simpleDateFormat.format(date);
-        }
+    private static String getTimeString(String timeStamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(Integer.parseInt(timeStamp) * 1000L);
+        Date date = calendar.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
+        return simpleDateFormat.format(date);
+    }
 
-        private String getUpdateDate(String timeStamp)
-        {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(Integer.parseInt(timeStamp) * 1000L);
-            Date date = calendar.getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy h:mm a");
-            return simpleDateFormat.format(date);
-        }
+    private String getUpdateDate(String timeStamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(Integer.parseInt(timeStamp) * 1000L);
+        Date date = calendar.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy h:mm a");
+        return simpleDateFormat.format(date);
+    }
 
 
-        private void setFetchedData(String response) throws JSONException {
+    private void setFetchedData(String response) throws JSONException {
             JSONObject jsonObject = new JSONObject(response);
 
             JSONArray jsonArray = jsonObject.getJSONArray("weather");
@@ -136,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
             int tempMin = (int) (main.getDouble("temp_min") - 273.15);
             int tempMax = (int) (main.getDouble("temp_max") - 273.15);
 
-            binding.tvTempMax.setText(tempMax + "°C");
-            binding.tvTempMin.setText(tempMin + "°C");
+            binding.tvTempMax.setText("Max :"+tempMax + "°C");
+            binding.tvTempMin.setText("Min :"+tempMin + "°C");
             binding.tvTemperature.setText(temperature + "°C");
 
             long sunriseTime = jsonObject.getJSONObject("sys").getLong("sunrise");
