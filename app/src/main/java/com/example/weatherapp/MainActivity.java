@@ -1,22 +1,11 @@
 package com.example.weatherapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.JsonReader;
-import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,7 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,13 +27,6 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     final String url = "http://api.openweathermap.org/data/2.5/weather";
     final String apiKey = "6167254a872b3097a04b6ee4e49a833c";
-
-    String location_provider = LocationManager.GPS_PROVIDER;
-    LocationManager locationManager;
-    LocationListener locationListener;
-    final int MIN_TIME = 5000;
-    final int MIN_DISTANCE = 1000;
-    final int REQUEST_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,8 +129,8 @@ public class MainActivity extends AppCompatActivity {
             int tempMin = (int) (main.getDouble("temp_min") - 273.15);
             int tempMax = (int) (main.getDouble("temp_max") - 273.15);
 
-            binding.tvTempMax.setText("Max :"+tempMax + "°C");
-            binding.tvTempMin.setText("Min :"+tempMin + "°C");
+            binding.tvTempMax.setText("Max Temp :"+tempMax + "°C");
+            binding.tvTempMin.setText("Min Temp :"+tempMin + "°C");
             binding.tvTemperature.setText(temperature + "°C");
 
             long sunriseTime = jsonObject.getJSONObject("sys").getLong("sunrise");
