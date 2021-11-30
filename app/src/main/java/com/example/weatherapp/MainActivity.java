@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getWeatherData(String location) {
-
+        //http://api.openweathermap.org/data/2.5/weather?q=malvan&appid=6167254a872b3097a04b6ee4e49a833c
         String tempUrl = url + "?q=" + location + "&appid=" + apiKey;
         StringRequest request = new StringRequest(Request.Method.POST, tempUrl, new Response.Listener<String>() {
             @Override
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             binding.mainContainer.setVisibility(View.VISIBLE);
         }
 
-        private void setWeatherIcon(String icon) {
+    private void setWeatherIcon(String icon) {
         switch (icon)
         {
             case "01d":
